@@ -11,27 +11,25 @@ export default function SignupPage() {
     password: "",
   });
 
+  const [userExists, setUserExists] = useState(false);
+
   async function handleSignup() {
     await axios
       .post("/api/users/signup", user)
-      .then((response) => {
-        console.log(response.data);
-      })
+      // .then((response) => {
+      //   console.log(response.status)})
+
       .catch((error) => {
         console.error("Error signing up:", error);
+        if (error.response && error.response.status === 409) {
+          setUserExists(true);
+          document.getElementById("username")?.focus();
+        }
       });
   }
 
   return (
     <>
-      <label htmlFor="email">Email:</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        required
-        onChange={(e) => setUser({ ...user, email: e.target.value })}
-      />
       <label htmlFor="username">Username:</label>
       <input
         type="username"
@@ -39,6 +37,14 @@ export default function SignupPage() {
         name="username"
         required
         onChange={(e) => setUser({ ...user, username: e.target.value })}
+      />
+      <label htmlFor="email">Email:</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        required
+        onChange={(e) => setUser({ ...user, email: e.target.value })}
       />
       <label htmlFor="password">Password:</label>
       <input
@@ -53,6 +59,7 @@ export default function SignupPage() {
       </button>
       <p>
         Already have an account? <Link href="/login">Login</Link>
+        {userExists && <span>Username already exists</span>}
       </p>
     </>
   );
