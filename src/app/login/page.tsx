@@ -5,14 +5,32 @@ import { useRouter } from "next/navigation";
 import  axios  from "axios";
 import Link from "next/link";
 
+
 export default function loginPage() {
+const router = useRouter();
+const [resMessage, setResMessage] = React.useState("");
+
   const [user, setUser] = React.useState({
     username: "",
     password: "",
   });
 
   function handleSubmit() {
-    console.log("user", user);
+   const res = axios.post("/api/users/login", user)
+    .then((response) => {
+      setResMessage(response.data.message);
+      if (response.status === 200) {
+        router.push("/");
+      }
+    })
+    .catch((error) => {
+      console.error("Error logging in:", error);
+      if (error.response) {
+        setResMessage(error.response.data.message);
+      } else {
+        setResMessage("An error occurred");
+      }
+    });
   }
 
   return (
@@ -39,6 +57,7 @@ export default function loginPage() {
         Sign In
       </button>
       <Link href="/signup">Don't have an account? Signup</Link>
+      <p>{resMessage}</p>
     </div>
   );
 }
