@@ -1,12 +1,36 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import { connectDB } from "@/db";
+import { NextResponse, NextRequest } from "next/server";
+import User from "@/models/userModel";
+import bcrypt from "bcryptjs";
 
-type ResponseData = {
-  message: string;
-};
+connectDB();
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
-) {
-  res.status(200).json({ message: "Hello from Next.js!" });
+//for app router
+export async function POST(req: Request) {
+  const user = await req.json();
+  const { email, username, password } = user;
+
+  //check if user already exists
+  const existingUser = await User.findOne({ username });
+  if (existingUser) {
+    return NextResponse.json(
+      { message: "User already exists" },
+      { status: 409 }
+    );
+  }
+
+  //hash password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+
+  const newUser = new User({
+    email,
+    username,
+    password: hashedPassword,
+  });
+
+  await newUser.save();
+
+  return NextResponse.json({ message: "User signed up successfully" });
 }

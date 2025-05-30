@@ -1,63 +1,59 @@
 "use client";
 
-import React from "react";
-import { useRouter } from "next/navigation";
-import axios  from "axios";
+import axios from "axios";
 import Link from "next/link";
+import React, { useState } from "react";
 
 export default function SignupPage() {
-
-
-  const [user, setUser] = React.useState({
-    username: "",
+  const [user, setUser] = useState({
     email: "",
+    username: "",
     password: "",
   });
 
-  async function  handleSubmit() {
-    console.log("user", user); 
-    if (!user.username || !user.email || !user.password) {
-      console.error("All fields are required");
-      return;
-    }
-
-    try {
-      const response = await axios.post("/api/users/signup", user);
-    
-  
-    } catch (error) {
-      console.error("Error during signup:", error);
-    }
+  async function handleSignup() {
+    await axios
+      .post("/api/users/signup", user)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Error signing up:", error);
+      });
   }
 
   return (
-    <div >
-      <h1>Signup Page</h1>
-      <label htmlFor="username">Username</label>
+    <>
+      <label htmlFor="email">Email:</label>
       <input
-        id="username"
-        type="text"
-        placeholder="Username"
-        value={user.username}
-        onChange={(e) => setUser({ ...user, username: e.target.value })}
-      />
-        <label htmlFor="email">Email</label>
-        <input id="email"
         type="email"
-        placeholder="Email"
-        value={user.email}
+        id="email"
+        name="email"
+        required
         onChange={(e) => setUser({ ...user, email: e.target.value })}
       />
-        <label htmlFor="password">Password</label>
+      <label htmlFor="username">Username:</label>
       <input
-        id="password"
+        type="username"
+        id="username"
+        name="username"
+        required
+        onChange={(e) => setUser({ ...user, username: e.target.value })}
+      />
+      <label htmlFor="password">Password:</label>
+      <input
         type="password"
-        placeholder="Password"
-        value={user.password}
+        id="password"
+        name="password"
+        required
         onChange={(e) => setUser({ ...user, password: e.target.value })}
       />
-      <button onClick={handleSubmit} type="submit">Sign Up</button>
-    <Link href="/login">Already have an account? Login</Link>
-    </div>
+      <button onClick={handleSignup} type="submit">
+        Sign Up
+      </button>
+      <p>
+        Already have an account? <Link href="/login">Login</Link>
+      </p>
+    </>
   );
 }
