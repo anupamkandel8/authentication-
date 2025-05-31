@@ -2,6 +2,7 @@ import { connectDB } from "@/db";
 import { NextResponse, NextRequest } from "next/server";
 import User from "@/models/userModel";
 import bcrypt from "bcryptjs";
+import { sendEmail } from "@/helpers/mailer";
 
 connectDB();
 
@@ -19,10 +20,9 @@ export async function POST(req: Request) {
     );
   }
 
-  //hash password 
+  //hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
-
 
   const newUser = new User({
     email,
@@ -31,6 +31,9 @@ export async function POST(req: Request) {
   });
 
   await newUser.save();
+  
+  //verification email
+  await sendEmail({ email, emailType: "VERIFY", userId: newUser._id });
 
   return NextResponse.json({ message: "User signed up successfully" });
 }

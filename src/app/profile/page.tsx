@@ -10,7 +10,6 @@ const ProfilePage = () => {
     axios
       .get("/api/users/me")
       .then((response) => {
-        console.log("User data:", response.data);
         setUser(response.data.user);
       })
       .catch((error) => {
