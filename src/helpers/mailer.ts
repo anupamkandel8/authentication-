@@ -4,10 +4,11 @@ import nodemailer from "nodemailer";
 import User from "@/models/userModel";
 import bcrypt from "bcryptjs";
 
-export async function sendEmail({ email, emailType, userId }:any) {
+export async function sendEmail({ email, emailType, userId }: any) {
   try {
     let user;
     const hashedToken = await bcrypt.hash(userId.toString(), 10);
+   
 
     if (emailType === "VERIFY") {
       user = await User.findByIdAndUpdate(
@@ -19,6 +20,8 @@ export async function sendEmail({ email, emailType, userId }:any) {
         { new: true } // this returns the updated user
       );
     }
+
+    console.log("User found:", user); //checked
 
     if (emailType === "RESET") {
       user = await User.findByIdAndUpdate(
@@ -45,22 +48,19 @@ export async function sendEmail({ email, emailType, userId }:any) {
       },
     });
 
-    const mailOptions = {
+    await transport.sendMail({
       from: "anupamkandel8@gmail.com",
       to: email,
       subject:
         emailType === "VERIFY" ? "Verify your email" : "Reset your password",
       html:
-        "<p> Click refer to the link below to " +
+        "<p>Click the link below to " +
         (emailType === "VERIFY" ? "verify your email" : "reset your password") +
-        "</p>" +
-        `<a href="${process.env.DOMAIN}/verify?token=${hashedToken}">Click here</a>` +
-        `</p>`,
-    };
-
-    await transport.sendMail(mailOptions);
+        ":</p>" +
+        `<a href="${process.env.DOMAIN}/${emailType === "VERIFY" ? "verify" : "reset-password"}?token=${hashedToken}">Click here</a>`,
+    });
   } catch (error) {
     console.error("Error sending email:", error);
-    throw new Error("Email sending failed");
+    //throw new Error("Email sending failed");
   }
 }

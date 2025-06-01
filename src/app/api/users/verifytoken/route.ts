@@ -22,7 +22,6 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-
     // Update the user's email verification status
     user.isVerified = true;
     user.verifyToken = undefined; // Clear the token after verification
