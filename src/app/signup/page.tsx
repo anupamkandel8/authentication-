@@ -3,8 +3,10 @@
 import axios from "axios";
 import Link from "next/link";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [user, setUser] = useState({
     email: "",
     username: "",

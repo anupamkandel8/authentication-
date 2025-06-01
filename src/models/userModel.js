@@ -5,8 +5,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Username is required"],
     unique: true,
-    
-  
   },
   email: {
     type: String,
@@ -17,11 +15,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Password is required"],
   },
-  isVarified: {
+  isVerified: {
     type: Boolean,
     default: false,
   },
-  isAdimin: {
+  isAdmin: {
     type: Boolean,
     default: false,
   },

@@ -8,7 +8,6 @@ export default function Home() {
   function handleLogout() {
     axios.get("/api/users/logout")
       .then(response => {
-        console.log(response.data); //temp code
       })
       .catch(error => {
         console.error("Error logging out:", error);

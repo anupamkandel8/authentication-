@@ -21,7 +21,6 @@ export async function sendEmail({ email, emailType, userId }: any) {
       );
     }
 
-    console.log("User found:", user); //checked
 
     if (emailType === "RESET") {
       user = await User.findByIdAndUpdate(

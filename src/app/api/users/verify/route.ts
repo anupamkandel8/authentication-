@@ -7,6 +7,7 @@ connectDB();
 export async function POST(req: NextRequest) {
   try {
     const { token } = await req.json();
+    console.log("Received token on backend:", token); // Log the received token for debugging
     if (!token) {
       return NextResponse.json({ error: "Token is required" }, { status: 400 });
     }
@@ -16,10 +17,11 @@ export async function POST(req: NextRequest) {
       verifyToken: token,
       verifyTokenExpiry: { $gt: Date.now() },
     });
+    console.log("User found for verification:", user); // Log the user found for verification
     if (!user) {
       return NextResponse.json(
-        { error: "Invalid or expired token" },
-        { status: 400 }
+      { error: "Invalid or expired token" },
+      { status: 400 }
       );
     }
     // Update the user's email verification status

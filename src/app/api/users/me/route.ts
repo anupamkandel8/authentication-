@@ -21,7 +21,6 @@ export async function GET(req: NextRequest) {
       { status: 401 }
     );
   }
-  console.log("useraaa", decodedToken);
   const userId = decodedToken.userId;
 
   const user = await User.findOne({ _id: userId }).select("-password");
